@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -22,6 +23,7 @@ func (r *Router) RunRouter(port string) {
 }
 
 func logNRedirect(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, id)
+	clientIP := c.RealIP()
+	fmt.Println(clientIP)
+	return c.Redirect(http.StatusMovedPermanently, "http://goog.le")
 }
