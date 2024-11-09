@@ -29,3 +29,7 @@ func (r *LinkRepository) Get(id string) (*models.LinkDataModel, error) {
 		return nil, errors.New("does not exist")
 	}
 }
+
+func (r *LinkRepository) Delete(id string) {
+	delete(r.links, id)
+}

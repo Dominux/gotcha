@@ -18,5 +18,16 @@ func (s *LinkService) Create(linkData *models.LinkDataModel) string {
 }
 
 func (s *LinkService) Get(id string) (*models.LinkDataModel, error) {
-	return s.repo.Get(id)
+	linkData, err := s.repo.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if linkData.FollowingsLeft == 1 {
+		s.repo.Delete(id)
+	} else {
+		linkData.FollowingsLeft -= 1
+	}
+
+	return linkData, nil
 }

@@ -14,9 +14,9 @@ func main() {
 	// creating link service
 	linkService := services.NewLinkService(linkRepo)
 
-	println(linkService.Create(&models.LinkDataModel{"https://goog.le", 0, 0, 0}))
-	println(linkService.Create(&models.LinkDataModel{"https://vk.com", 0, 0, 0}))
-	println(linkService.Create(&models.LinkDataModel{"https://youtu.be", 0, 0, 0}))
+	println(linkService.Create(&models.LinkDataModel{"https://goog.le", 2}))
+	println(linkService.Create(&models.LinkDataModel{"https://vk.com", 1}))
+	println(linkService.Create(&models.LinkDataModel{"https://youtu.be", 3}))
 
 	r := routers.NewLinkRouter(linkService)
 	r.RunLinkRouter("8000")
