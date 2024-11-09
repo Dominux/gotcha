@@ -4,16 +4,20 @@ import (
 	"github.com/Dominux/gotcha/internal/models"
 	"github.com/Dominux/gotcha/internal/repositories"
 	"github.com/Dominux/gotcha/internal/routers"
+	"github.com/Dominux/gotcha/internal/services"
 )
 
 func main() {
-	// creating urls repo
-	urlsRepo := repositories.NewLinkRepository()
+	// creating link repo
+	linkRepo := repositories.NewLinkRepository()
 
-	println(urlsRepo.Create(&models.LinkDataModel{"https://goog.le", 0, 0, 0}))
-	println(urlsRepo.Create(&models.LinkDataModel{"https://vk.com", 0, 0, 0}))
-	println(urlsRepo.Create(&models.LinkDataModel{"https://youtu.be", 0, 0, 0}))
+	// creating link service
+	linkService := services.NewLinkService(linkRepo)
 
-	r := routers.NewRouter(urlsRepo)
-	r.RunRouter("8000")
+	println(linkService.Create(&models.LinkDataModel{"https://goog.le", 0, 0, 0}))
+	println(linkService.Create(&models.LinkDataModel{"https://vk.com", 0, 0, 0}))
+	println(linkService.Create(&models.LinkDataModel{"https://youtu.be", 0, 0, 0}))
+
+	r := routers.NewLinkRouter(linkService)
+	r.RunLinkRouter("8000")
 }
