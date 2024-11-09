@@ -1,9 +1,14 @@
 package services
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/Dominux/gotcha/internal/models"
 	"github.com/Dominux/gotcha/internal/repositories"
 )
+
+const Day = time.Hour * 24
 
 type LinkService struct {
 	repo *repositories.LinkRepository
@@ -30,4 +35,26 @@ func (s *LinkService) Get(id string) (*models.LinkDataModel, error) {
 	}
 
 	return linkData, nil
+}
+
+func (s *LinkService) RunLinksRemovingCycle() {
+	println("Ran links removing cycle")
+
+	for {
+		time.Sleep(Day)
+
+		var deletedCounter uint
+		f := func(id string, linkData *models.LinkDataModel) {
+			if linkData.DaysLeft == 1 {
+				s.repo.Delete(id)
+				deletedCounter += 1
+			} else {
+				linkData.DaysLeft -= 1
+			}
+		}
+
+		s.repo.Map(f)
+
+		fmt.Printf("Removed %d outdated links\n", deletedCounter)
+	}
 }

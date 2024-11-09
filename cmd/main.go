@@ -14,10 +14,15 @@ func main() {
 	// creating link service
 	linkService := services.NewLinkService(linkRepo)
 
-	println(linkService.Create(&models.LinkDataModel{"https://goog.le", 2}))
-	println(linkService.Create(&models.LinkDataModel{"https://vk.com", 1}))
-	println(linkService.Create(&models.LinkDataModel{"https://youtu.be", 3}))
+	// creating links
+	println(linkService.Create(&models.LinkDataModel{"https://goog.le", 2, 1}))
+	println(linkService.Create(&models.LinkDataModel{"https://vk.com", 1, 2}))
+	println(linkService.Create(&models.LinkDataModel{"https://youtu.be", 3, 2}))
 
+	// adding removing cycle
+	go linkService.RunLinksRemovingCycle()
+
+	// creating link router and running it
 	r := routers.NewLinkRouter(linkService)
 	r.RunLinkRouter("8000")
 }

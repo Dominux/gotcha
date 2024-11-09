@@ -22,6 +22,12 @@ func (r *LinkRepository) Create(linkData *models.LinkDataModel) string {
 	return id
 }
 
+func (r *LinkRepository) Map(f func(string, *models.LinkDataModel)) {
+	for id, linkData := range r.links {
+		f(id, linkData)
+	}
+}
+
 func (r *LinkRepository) Get(id string) (*models.LinkDataModel, error) {
 	if link, exists := r.links[id]; exists {
 		return link, nil
