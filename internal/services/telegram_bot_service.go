@@ -11,6 +11,13 @@ import (
 	"github.com/Dominux/gotcha/internal/models"
 )
 
+const msgTemplate = `
+<b>Gotcha</b>
+
+<b>original link:</b> <i>%s</i>
+<b>IP:</b> <code>%s</code>
+`
+
 type TelegramBotService struct {
 	linkService  *LinkService
 	botToken     *string
@@ -30,6 +37,11 @@ func (s *TelegramBotService) RunCheckingUpdatesCycle() {
 	for {
 		s.processCheckingUpdatesIteration()
 	}
+}
+
+func (s *TelegramBotService) SendGotcha(destinationLink, ip string) {
+	text := fmt.Sprintf(msgTemplate, destinationLink, ip)
+	s.sendMessage(s.userId, text)
 }
 
 func (s *TelegramBotService) processCheckingUpdatesIteration() {
@@ -89,7 +101,7 @@ func (s *TelegramBotService) processMessage(msg models.TelegramApiMessageModel) 
 }
 
 func (s *TelegramBotService) sendMessage(chatId uint64, text string) error {
-	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?chat_id=%d&text=%s", *s.botToken, chatId, url.QueryEscape(text))
+	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?chat_id=%d&text=%s&parse_mode=html", *s.botToken, chatId, url.QueryEscape(text))
 	_, err := http.Get(url)
 	return err
 }

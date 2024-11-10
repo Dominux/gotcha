@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Dominux/gotcha/internal/services"
@@ -9,13 +8,14 @@ import (
 )
 
 type LinkRouter struct {
-	e           *echo.Group
-	service     *services.LinkService
-	notFoundUrl *string
+	e            *echo.Group
+	service      *services.LinkService
+	tgBotService *services.TelegramBotService
+	notFoundUrl  *string
 }
 
-func newLinkRouter(g *echo.Group, service *services.LinkService, notFoundUrl *string) *LinkRouter {
-	router := &LinkRouter{g, service, notFoundUrl}
+func newLinkRouter(g *echo.Group, service *services.LinkService, tgBotService *services.TelegramBotService, notFoundUrl *string) *LinkRouter {
+	router := &LinkRouter{g, service, tgBotService, notFoundUrl}
 
 	g.GET("/:id", router.logNRedirect)
 
@@ -33,6 +33,7 @@ func (r *LinkRouter) logNRedirect(c echo.Context) error {
 	}
 
 	clientIP := c.RealIP()
-	fmt.Println(clientIP)
+	r.tgBotService.SendGotcha(link.DestinationLink, clientIP)
+
 	return c.Redirect(http.StatusMovedPermanently, link.DestinationLink)
 }

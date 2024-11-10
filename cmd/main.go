@@ -50,7 +50,7 @@ func main() {
 
 	// creating main router and running it
 	r := routers.NewMainRouter()
-	r.AddLinkRouter(linkService, &config.NotFoundUrl)
+	r.AddLinkRouter(linkService, tgBotService, &config.NotFoundUrl)
 
 	r.RunRouter("8000")
 }

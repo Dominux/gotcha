@@ -15,9 +15,9 @@ func NewMainRouter() *MainRouter {
 	return &MainRouter{e, nil}
 }
 
-func (r *MainRouter) AddLinkRouter(service *services.LinkService, notFoundUrl *string) {
+func (r *MainRouter) AddLinkRouter(service *services.LinkService, tgBotService *services.TelegramBotService, notFoundUrl *string) {
 	linkGroup := r.e.Group("/l")
-	r.linkRouter = newLinkRouter(linkGroup, service, notFoundUrl)
+	r.linkRouter = newLinkRouter(linkGroup, service, tgBotService, notFoundUrl)
 }
 
 func (r *MainRouter) RunRouter(port string) {
