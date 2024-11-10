@@ -22,7 +22,9 @@ func main() {
 	// adding removing cycle
 	go linkService.RunLinksRemovingCycle()
 
-	// creating link router and running it
-	r := routers.NewLinkRouter(linkService)
-	r.RunLinkRouter("8000")
+	// creating main router and running it
+	r := routers.NewMainRouter()
+	r.AddLinkRouter(linkService)
+
+	r.RunRouter("8000")
 }

@@ -9,18 +9,16 @@ import (
 )
 
 type LinkRouter struct {
-	e       *echo.Echo
+	e       *echo.Group
 	service *services.LinkService
 }
 
-func NewLinkRouter(service *services.LinkService) *LinkRouter {
-	e := echo.New()
-	return &LinkRouter{e, service}
-}
+func newLinkRouter(g *echo.Group, service *services.LinkService) *LinkRouter {
+	router := &LinkRouter{g, service}
 
-func (r *LinkRouter) RunLinkRouter(port string) {
-	r.e.GET("/:id", r.logNRedirect)
-	r.e.Logger.Fatal(r.e.Start(":" + port))
+	g.GET("/:id", router.logNRedirect)
+
+	return router
 }
 
 func (r *LinkRouter) logNRedirect(c echo.Context) error {
