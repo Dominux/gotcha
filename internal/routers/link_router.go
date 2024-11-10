@@ -9,12 +9,13 @@ import (
 )
 
 type LinkRouter struct {
-	e       *echo.Group
-	service *services.LinkService
+	e           *echo.Group
+	service     *services.LinkService
+	notFoundUrl *string
 }
 
-func newLinkRouter(g *echo.Group, service *services.LinkService) *LinkRouter {
-	router := &LinkRouter{g, service}
+func newLinkRouter(g *echo.Group, service *services.LinkService, notFoundUrl *string) *LinkRouter {
+	router := &LinkRouter{g, service, notFoundUrl}
 
 	g.GET("/:id", router.logNRedirect)
 
@@ -27,7 +28,8 @@ func (r *LinkRouter) logNRedirect(c echo.Context) error {
 	// trying to get link by id
 	link, err := r.service.Get(id)
 	if err != nil {
-		return c.String(http.StatusNotFound, "Not Found")
+		// return c.String(http.StatusNotFound, "Not Found")
+		return c.Redirect(http.StatusMovedPermanently, *r.notFoundUrl)
 	}
 
 	clientIP := c.RealIP()

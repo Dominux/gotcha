@@ -11,15 +11,17 @@ import (
 const Day = time.Hour * 24
 
 type LinkService struct {
-	repo *repositories.LinkRepository
+	repo    *repositories.LinkRepository
+	urlBase *string
 }
 
-func NewLinkService(repo *repositories.LinkRepository) *LinkService {
-	return &LinkService{repo}
+func NewLinkService(repo *repositories.LinkRepository, urlBase *string) *LinkService {
+	return &LinkService{repo, urlBase}
 }
 
 func (s *LinkService) Create(linkData *models.LinkDataModel) string {
-	return s.repo.Create(linkData)
+	id := s.repo.Create(linkData)
+	return fmt.Sprintf("%s/l/%s", *s.urlBase, id)
 }
 
 func (s *LinkService) Get(id string) (*models.LinkDataModel, error) {
