@@ -6,6 +6,7 @@ import (
 
 	"github.com/Dominux/gotcha/internal/models"
 	"github.com/Dominux/gotcha/internal/repositories"
+	"github.com/Dominux/gotcha/internal/urlgens"
 )
 
 const Day = time.Hour * 24
@@ -19,9 +20,17 @@ func NewLinkService(repo *repositories.LinkRepository, urlBase *string) *LinkSer
 	return &LinkService{repo, urlBase}
 }
 
-func (s *LinkService) Create(linkData *models.LinkDataModel) string {
+func (s *LinkService) Create(linkData *models.LinkDataModel) (string, string) {
 	id := s.repo.Create(linkData)
-	return fmt.Sprintf("%s/l/%s", *s.urlBase, id)
+	gotchaLink := fmt.Sprintf("%s/l/%s", *s.urlBase, id)
+
+	// trying integrations
+	shortUrlLink, err := urlgens.GenShortUrl(gotchaLink)
+	if err != nil {
+		println(err.Error())
+	}
+
+	return gotchaLink, shortUrlLink
 }
 
 func (s *LinkService) Get(id string) (*models.LinkDataModel, error) {

@@ -33,7 +33,8 @@ func (r *LinkRouter) logNRedirect(c echo.Context) error {
 	}
 
 	clientIP := c.RealIP()
-	r.tgBotService.SendGotcha(link.DestinationLink, clientIP)
+	userAgent := c.Request().UserAgent()
+	r.tgBotService.SendGotcha(link.DestinationLink, clientIP, userAgent)
 
 	return c.Redirect(http.StatusMovedPermanently, link.DestinationLink)
 }
