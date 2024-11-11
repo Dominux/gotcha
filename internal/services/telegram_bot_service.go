@@ -11,11 +11,21 @@ import (
 	"github.com/Dominux/gotcha/internal/models"
 )
 
-const msgTemplate = `
+const linksCreatedMsgTemplate = `
+Links created:
+
+<i>gotcha</i>: <code>%s</code>
+
+Integrations:
+<i>shorturl.at</i>: <code>%s</code>
+`
+
+const gotchaMsgTemplate = `
 <b>Gotcha</b>
 
 <b>original link:</b> <i>%s</i>
 <b>IP:</b> <code>%s</code>
+<b>User Agent:</b> <i>%s</i>
 `
 
 type TelegramBotService struct {
@@ -39,8 +49,8 @@ func (s *TelegramBotService) RunCheckingUpdatesCycle() {
 	}
 }
 
-func (s *TelegramBotService) SendGotcha(destinationLink, ip string) {
-	text := fmt.Sprintf(msgTemplate, destinationLink, ip)
+func (s *TelegramBotService) SendGotcha(destinationLink, ip string, userAgent string) {
+	text := fmt.Sprintf(gotchaMsgTemplate, destinationLink, ip, userAgent)
 	s.sendMessage(s.userId, text)
 }
 
@@ -94,8 +104,10 @@ func (s *TelegramBotService) processMessage(msg models.TelegramApiMessageModel) 
 
 	// creating gotcha link
 	linkData := models.LinkDataModel{msg.Text, 1, 7}
-	link := s.linkService.Create(&linkData)
-	if err := s.sendMessage(s.userId, link); err != nil {
+	gotchaLink, shortUrlLink := s.linkService.Create(&linkData)
+	msgToSend := fmt.Sprintf(linksCreatedMsgTemplate, gotchaLink, shortUrlLink)
+
+	if err := s.sendMessage(s.userId, msgToSend); err != nil {
 		s.raiseTgApiError(err)
 	}
 }
